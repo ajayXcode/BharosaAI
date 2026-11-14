@@ -24,7 +24,8 @@ export async function POST(request: Request) {
     if (!text) {
       return NextResponse.json({ error: "Nothing to read aloud." }, { status: 400 });
     }
-    const lang = LANGS.includes(body.lang ?? "en") ? (body.lang as Lang) : "en";
+    const requested = body.lang ?? "en";
+    const lang: Lang = LANGS.includes(requested) ? requested : "en";
 
     try {
       const target = sarvamTtsLanguage(lang);

@@ -20,7 +20,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "documentId is required" }, { status: 400 });
     }
     try {
-      const lang = LANGS.includes(body.lang ?? "en") ? (body.lang as Lang) : "en";
+      const requested = body.lang ?? "en";
+      const lang: Lang = LANGS.includes(requested) ? requested : "en";
       const result = await ask(body.documentId, body.question ?? "", lang);
       await persistWorkspace();
       return NextResponse.json(result);
