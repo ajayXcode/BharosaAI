@@ -16,3 +16,5 @@ next-env.d.ts
 /shot.mjs
 /qa-prod-email.txt
 /*.jar
+/measure*.mjs
+/crop-*.png
