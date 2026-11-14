@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BatteryFull,
   Bell,
   BrainCircuit,
   ChevronRight,
@@ -16,9 +17,11 @@ import {
   Lightbulb,
   QrCode,
   ScanLine,
+  Signal,
   Smartphone,
   UserRound,
   Wallet,
+  Wifi,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -55,12 +58,28 @@ const RECENT = [
  * The Paytm app home screen. Bharosa AI appears here as one of the Paytm
  * features; opening it hands control to the full Bharosa flow.
  */
-export function PaytmHome({ onOpenBharosa }: { onOpenBharosa: () => void }) {
+export function PaytmHome({
+  onOpenBharosa,
+  embed = false,
+}: {
+  onOpenBharosa: () => void;
+  embed?: boolean;
+}) {
   const [hidden, setHidden] = useState(false);
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#f3f6fa]">
       <header className="shrink-0 bg-white px-3.5 pt-2.5 pb-2">
+        {embed && (
+          <div className="flex items-center justify-between pb-1.5 text-[9.5px] font-bold text-[#002970]">
+            <span className="w-10 tabular-nums">9:41</span>
+            <span className="flex items-center gap-1">
+              <Signal className="size-3" strokeWidth={2.5} />
+              <Wifi className="size-3" strokeWidth={2.5} />
+              <BatteryFull className="size-4" strokeWidth={2} />
+            </span>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="grid size-8 place-items-center rounded-full bg-[#00baf2] text-[10px] font-bold text-white">

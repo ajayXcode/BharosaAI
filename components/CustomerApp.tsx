@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowRight,
   BadgeCheck,
+  BatteryFull,
   Bell,
   Bot,
   BrainCircuit,
@@ -28,10 +29,12 @@ import {
   ReceiptText,
   ScanLine,
   Send,
+  Signal,
   ShieldCheck,
   Upload,
   UserRound,
   Wallet,
+  Wifi,
   X,
 } from "lucide-react";
 import type {
@@ -329,13 +332,24 @@ export function CustomerApp({ embed = false }: { embed?: boolean }) {
       await load();
     });
 
-  if (!insideBharosa) return <PaytmHome onOpenBharosa={() => setInsideBharosa(true)} />;
+  if (!insideBharosa)
+    return <PaytmHome embed={embed} onOpenBharosa={() => setInsideBharosa(true)} />;
 
   if (empty) return <EmptyCustomer onDone={uploaded} onBack={() => setInsideBharosa(false)} />;
 
   return (
     <div className="flex h-dvh flex-col bg-page">
       <header className="shrink-0 border-b border-line bg-card px-3.5 pt-2.5 pb-2">
+        {embed && (
+          <div className="flex items-center justify-between pb-1.5 text-[9.5px] font-bold text-navy">
+            <span className="w-10 tabular-nums">9:41</span>
+            <span className="flex items-center gap-1">
+              <Signal className="size-3" strokeWidth={2.5} />
+              <Wifi className="size-3" strokeWidth={2.5} />
+              <BatteryFull className="size-4" strokeWidth={2} />
+            </span>
+          </div>
+        )}
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <div className="flex items-center gap-1 justify-self-start">
             <button
