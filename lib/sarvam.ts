@@ -31,5 +31,6 @@ export function sarvamTtsLanguage(lang: Lang) {
 }
 
 export function sarvamSpeaker(lang: Lang) {
-  return lang === "hi" ? "shubh" : "anushka";
+  // bulbul:v3 only accepts its own speaker set; these two are in it.
+  return lang === "hi" ? "priya" : "ritu";
 }
