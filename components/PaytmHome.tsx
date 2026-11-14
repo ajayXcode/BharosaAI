@@ -68,7 +68,7 @@ export function PaytmHome({
   const [hidden, setHidden] = useState(false);
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#f3f6fa]">
+    <div className="flex h-dvh min-h-0 flex-col bg-[#f3f6fa]">
       <header className="shrink-0 bg-white px-3.5 pt-2.5 pb-2">
         {embed && (
           <div className="flex items-center justify-between pb-1.5 text-[9.5px] font-bold text-[#002970]">
