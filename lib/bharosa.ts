@@ -1136,9 +1136,9 @@ export async function ask(docId: string, question: string, lang: Lang) {
         true,
         "nvidia",
       );
-    } else if (ai && !ai.grounded) {
-      result = message(NOT_AVAILABLE[lang], [], lang, false, "nvidia");
     }
+    // When the model will not commit to an answer, fall through to the
+    // retrieved clause below so a direct quote can still be shown.
   }
 
   if (!result && retrieved.length) {
@@ -1153,7 +1153,7 @@ export async function ask(docId: string, question: string, lang: Lang) {
 
   if (!result) {
     const match = bestClause(doc, clean);
-    if (match && match.score >= 3) {
+    if (match && match.score >= 2) {
       result = message(localizedQuote(cite(doc.clauses, match.clause.id), lang), [
         cite(doc.clauses, match.clause.id),
       ], lang, true);
