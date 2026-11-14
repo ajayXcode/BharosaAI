@@ -30,15 +30,24 @@ export async function POST(request: Request) {
     }
 
     try {
+      const bytes = Buffer.from(await file.arrayBuffer());
+      const filename = file.name && file.name.includes(".") ? file.name : "audio.webm";
+      const contentType = file.type || "audio/webm";
+      const chosen = LANGS.includes(lang) ? lang : "en";
       const result = await getSarvam().speechToText.transcribe({
-        file,
+        file: { data: bytes, filename, contentType },
         model: "saaras:v3",
-        language_code: sarvamSttLanguage(LANGS.includes(lang) ? lang : "en"),
+        language_code: sarvamSttLanguage(chosen) as never,
+        mode: "transcribe" as never,
       });
+      const raw = result as unknown as Record<string, unknown>;
       const transcript =
-        typeof (result as { transcript?: unknown }).transcript === "string"
-          ? ((result as { transcript: string }).transcript || "").trim()
-          : "";
+        (typeof raw.transcript === "string" && raw.transcript.trim()) ||
+        (typeof raw.text === "string" && raw.text.trim()) ||
+        (Array.isArray(raw.transcripts) &&
+          typeof (raw.transcripts[0] as Record<string, unknown> | undefined)?.transcript === "string" &&
+          String((raw.transcripts[0] as Record<string, unknown>).transcript).trim()) ||
+        "";
       if (!transcript) {
         return NextResponse.json(
           { error: "Could not understand the audio. Please try again." },
@@ -47,10 +56,7 @@ export async function POST(request: Request) {
       }
       return NextResponse.json({
         transcript,
-        language_code:
-          typeof (result as { language_code?: unknown }).language_code === "string"
-            ? (result as { language_code: string }).language_code
-            : null,
+        language_code: typeof raw.language_code === "string" ? raw.language_code : null,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Transcription failed.";

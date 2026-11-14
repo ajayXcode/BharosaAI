@@ -27,15 +27,21 @@ export async function POST(request: Request) {
     const lang = LANGS.includes(body.lang ?? "en") ? (body.lang as Lang) : "en";
 
     try {
+      const target = sarvamTtsLanguage(lang);
       const result = await getSarvam().textToSpeech.convert({
         text,
-        language_code: sarvamTtsLanguage(lang) as never,
+        target_language_code: target as never,
+        language_code: target as never,
         speaker: sarvamSpeaker(lang) as never,
         model: "bulbul:v3",
         enable_preprocessing: true,
-      });
-      const audios = (result as { audios?: unknown }).audios;
-      const audio = Array.isArray(audios) && typeof audios[0] === "string" ? audios[0] : null;
+        speech_sample_rate: 22050,
+      } as never);
+      const raw = result as unknown as Record<string, unknown>;
+      const audios = raw.audios;
+      const audio =
+        (Array.isArray(audios) && typeof audios[0] === "string" ? audios[0] : null) ||
+        (typeof raw.audio === "string" ? raw.audio : null);
       if (!audio) {
         return NextResponse.json({ error: "Could not generate audio." }, { status: 502 });
       }
