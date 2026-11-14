@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/ui";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { supabaseBrowser } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup";
 
@@ -13,6 +15,24 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [oauthBusy, setOauthBusy] = useState<"google" | "github" | null>(null);
+
+  async function oauth(provider: "google" | "github") {
+    setError(null);
+    setOauthBusy(provider);
+    try {
+      const supabase = supabaseBrowser();
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo },
+      });
+      if (oauthError) throw oauthError;
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not start social sign-in");
+      setOauthBusy(null);
+    }
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -36,7 +56,10 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
   return (
     <div className="w-full max-w-md">
       <div className="rounded-3xl border border-line bg-card p-7 shadow-[0_24px_70px_-32px_rgba(16,24,40,0.35)] sm:p-9">
-        <Logo tone="dark" />
+        <div className="flex items-center justify-between gap-3">
+          <Logo tone="dark" />
+          <ThemeToggle className="border-line bg-page text-ink-2 hover:bg-sky-soft hover:text-navy" />
+        </div>
         <h1 className="mt-7 text-[26px] font-extrabold tracking-[-0.04em] text-ink">
           {mode === "login" ? "Sign in to your workspace" : "Create your workspace"}
         </h1>
@@ -46,7 +69,61 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
             : "Real account, private data, live sync across your devices."}
         </p>
 
-        <form onSubmit={submit} className="mt-6 space-y-3.5">
+        <div className="mt-6 grid gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => oauth("google")}
+            disabled={busy || oauthBusy !== null}
+            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-page text-[13px] font-semibold text-ink transition hover:border-sky/40 hover:bg-card disabled:opacity-60"
+          >
+            {oauthBusy === "google" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
+                <path
+                  fill="#4285F4"
+                  d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.4a5.5 5.5 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.6-5.2 3.6-8.8Z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24Z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.4 14.4a7.2 7.2 0 0 1 0-4.6V6.7H1.4a12 12 0 0 0 0 10.7l4-3Z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.4 6.7l4 3.1C6.3 6.9 8.9 4.8 12 4.8Z"
+                />
+              </svg>
+            )}
+            Google
+          </button>
+          <button
+            type="button"
+            onClick={() => oauth("github")}
+            disabled={busy || oauthBusy !== null}
+            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-page text-[13px] font-semibold text-ink transition hover:border-sky/40 hover:bg-card disabled:opacity-60"
+          >
+            {oauthBusy === "github" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden="true">
+                <path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12A11.5 11.5 0 0 0 12 .5Z" />
+              </svg>
+            )}
+            GitHub
+          </button>
+        </div>
+
+        <div className="mt-4 flex items-center gap-3 text-[10.5px] font-semibold tracking-[0.12em] text-ink-3 uppercase">
+          <span className="h-px flex-1 bg-line" />
+          or use email
+          <span className="h-px flex-1 bg-line" />
+        </div>
+
+        <form onSubmit={submit} className="mt-4 space-y-3.5">
           {mode === "signup" ? (
             <label className="block">
               <span className="text-[12px] font-semibold text-ink-2">Name</span>

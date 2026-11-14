@@ -20,7 +20,9 @@ workspace at `/app?embed=1`, so an upload, approval or language change appears i
 | Route | Purpose |
 |-------|---------|
 | `/` | Marketing site and product overview |
-| `/login` | Supabase email/password sign-in and account creation |
+| `/login` | Supabase email/password, Google and GitHub sign-in and account creation |
+| `/auth/callback` | Supabase OAuth code exchange, then redirect to the workspace |
+| `/admin` | Owner-only user list with Free / Pro / Enterprise plan controls |
 | `/dashboard` | Private workspace: document library, facts, red flags, stress test, cited chat, verify, Act, live customer phone |
 | `/app` | Private mobile-first customer journey: Home, Alerts, Test, Ask, Act |
 | `/dashboard?embed=1`, `/app?embed=1` | Chrome-free versions used inside the phone frame |
@@ -48,9 +50,57 @@ workspace at `/app?embed=1`, so an upload, approval or language change appears i
 | `/api/escalate` | POST | Human handoff with transcript and citations |
 | `/api/metrics` | GET | Citation and usage metrics |
 | `/api/health` | GET | Supabase, Pinecone and NVIDIA status (no secrets) |
+| `/api/voice/stt` | POST | Sarvam speech-to-text for a recorded question |
+| `/api/voice/tts` | POST | Sarvam text-to-speech for reading an answer aloud |
+| `/api/admin/login` | POST | Admin panel sign-in (separate owner cookie) |
+| `/api/admin/logout` | POST | Clear the admin cookie |
+| `/api/admin/users` | GET | All accounts, auth provider, document count and granted plan |
+| `/api/admin/plan` | POST | Grant Free, Pro or Enterprise to a user |
 
-Every endpoint except `/api/health` and `/api/auth/*` requires a session. Authentication is checked
-before request bodies are parsed for document mutations. Requests without a session get `401`.
+Every endpoint except `/api/health`, `/api/auth/*` and `/api/admin/*` requires a session.
+Authentication is checked before request bodies are parsed for document mutations. Requests without
+a session get `401`; admin endpoints return `401` without the admin cookie.
+
+## Theme
+
+The UI ships light, dark and system themes (`next-themes`). The toggle is in the landing header, the
+dashboard header and the customer app; the choice is remembered per browser and follows the OS when
+set to **System**. Dark mode swaps surface, text and border tokens in `app/globals.css`, while brand
+navy panels stay deep navy for contrast.
+
+## Social sign-in
+
+`/login` offers Google and GitHub through Supabase OAuth. The callback route is `/auth/callback`.
+Add these exact URLs in Supabase → Authentication → URL Configuration (Redirect URLs):
+
+- `http://localhost:3000/auth/callback`
+- `https://bharosa-ai-paytm.vercel.app/auth/callback`
+- `https://bharosa-ai-paytm-<deployment>.vercel.app/auth/callback` for preview deployments
+
+Enable the Google and GitHub providers under Authentication → Providers and paste their client ID and
+secret there. Your Supabase callback (`https://<ref>.supabase.co/auth/v1/callback`) stays as the
+provider-side redirect; the app URL above is where Supabase returns the user.
+
+## Admin panel and plans
+
+`/admin` is the owner console. It lists every account Supabase can see (email, provider, documents,
+join and last sign-in dates) and lets you grant **Free**, **Pro** or **Enterprise** in one click. The
+grant is stored in Supabase `app_metadata.plan`, which users cannot edit from the browser. Optional
+mirroring to `supabase/migrations/20261114000000_saas_plans.sql` gives you a queryable table.
+
+Demo credentials (override with `ADMIN_EMAIL` / `ADMIN_PASSWORD`):
+
+- Email: `admin@bharosa.ai`
+- Password: `BharosaAdmin@123`
+
+The public pricing section at `/#plans` mirrors the same three plans.
+
+## Finance-only answers
+
+`lib/bharosa.ts` runs a scope guard before retrieval. A question is answered only when it uses
+finance vocabulary (loan, EMI, interest, premium, claim, card, bank, …) or words that appear in the
+uploaded document. Anything else — food, cricket, movies, weather, coding, small talk — gets a short
+scope refusal instead of a model call, so the assistant never answers unrelated questions.
 
 ## Document upload
 

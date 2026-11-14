@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --color-navy: var(--navy);
   --color-navy-2: var(--navy-2);
@@ -41,13 +43,57 @@
   color-scheme: light;
 }
 
+.dark {
+  --navy: #7fd4f5;
+  --navy-2: #a5e2fa;
+  --sky: #22c4f5;
+  --sky-soft: #0d2a3d;
+  --page: #07111f;
+  --card: #0d1a2b;
+  --ink: #e8eef7;
+  --ink-2: #a8b6c9;
+  --ink-3: #6b7c92;
+  --line: #1e2f45;
+  --ok: #2fd18c;
+  --ok-soft: #0b2b21;
+  --warn: #f7a833;
+  --warn-soft: #33240b;
+  --bad: #ff6b6f;
+  --bad-soft: #361418;
+  color-scheme: dark;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+/* Brand navy is a light accent in dark mode (headings), so brand panels keep
+   their deep navy surface explicitly instead of turning light. */
+.dark .bg-navy {
+  background-color: #0a2a52;
+}
+.dark .bg-navy\/95 {
+  background-color: rgba(8, 33, 63, 0.96);
+}
+.dark .bg-navy\/45 {
+  background-color: rgba(3, 14, 28, 0.62);
+}
+.dark .bg-navy-2,
+.dark .hover\:bg-navy-2:hover {
+  background-color: #0e3a6b;
+}
+.dark .ring-navy {
+  --tw-ring-color: rgba(127, 212, 245, 0.35);
+}
+
+.dark .shadow-\[0_1px_2px_rgba\(16\,24\,40\,0\.04\)\,0_10px_28px_-18px_rgba\(0\,46\,110\,0\.28\)\] {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 28px -18px rgba(0, 0, 0, 0.8);
 }
 
 body {
   background: var(--page);
   color: var(--ink);
+  transition: background-color 0.2s ease, color 0.2s ease;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

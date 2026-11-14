@@ -427,6 +427,69 @@ function citationFor(clause: Clause): Citation {
   return { page: clause.page, clause: clause.section, quote: clause.text };
 }
 
+// ---------------------------------------------------------------------------
+// Finance-only scope guard
+// ---------------------------------------------------------------------------
+
+const FINANCE_TERMS = [
+  "loan", "emi", "interest", "apr", "principal", "tenure", "prepay", "prepayment",
+  "foreclose", "foreclosure", "disburse", "disbursal", "processing fee", "penalty",
+  "late fee", "credit", "debit", "card", "statement", "minimum due", "revolv",
+  "balance", "limit", "bank", "account", "neft", "upi", "mandate", "insurance",
+  "policy", "premium", "claim", "cover", "sum insured", "copay", "co-pay", "deductible",
+  "waiting period", "room rent", "hospital", "network", "insurer", "underwrit",
+  "tax", "gst", "refund", "charge", "fee", "payment", "repay", "repayment", "mortgage",
+  "collateral", "cibil", "credit score", "kyc", "nach", "emi bounce", "overdue",
+  "lock-in", "surrender", "maturity", "annuity", "mutual fund", "sip", "equity",
+  "stock", "share", "dividend", "demat", "fd", "fixed deposit", "rd", "recurring deposit",
+  "inflation", "budget", "savings", "expense", "salary", "cheque", "cheque bounce",
+  "paisa", "paise", "rupee", "rupaye", "byaaj", "bima", "karz", "kharach", "bachat",
+  "ब्याज", "बीमा", "कर्ज़", "कर्ज", "प्रीमियम", "क्लेम", "पॉलिसी", "लोन", "ईएमआई",
+  "शुल्क", "भुगतान", "बैंक", "खाता", "कार्ड", "बचत",
+];
+
+const DOC_AGNOSTIC_TERMS = [
+  "document", "summary", "overview", "explain", "meaning", "mean", "important",
+  "risk", "risks", "highlight", "highlights", "cost", "costs", "price", "charge",
+  "charges", "term", "terms", "condition", "conditions", "benefit", "benefits",
+  "exclusion", "exclusions", "waiting", "limit", "limits", "clause", "page", "section",
+  "deduct", "deduction", "cap", "capped", "floor", "percent", "percentage", "amount",
+];
+
+/**
+ * True when the question is clearly outside personal finance and banking.
+ * A question is allowed through when it uses finance vocabulary or words that
+ * actually appear in the uploaded document; everything else is out of scope.
+ */
+/** Short terms such as "rd" or "emi" must match whole words, not substrings. */
+function includesTerm(haystack: string, term: string) {
+  if (term.length > 3) return haystack.includes(term);
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`).test(haystack);
+}
+
+export function isOffTopic(question: string, documentText = "") {
+  const q = question.toLowerCase();
+  if (FINANCE_TERMS.some((term) => includesTerm(q, term))) return false;
+  if (DOC_AGNOSTIC_TERMS.some((term) => includesTerm(q, term))) return false;
+
+  const words = tokens(q).filter((word) => word.length > 3);
+  if (words.length && documentText) {
+    const haystack = documentText.toLowerCase();
+    if (words.some((word) => haystack.includes(word))) return false;
+  }
+
+  if (!words.length) return false;
+  return true;
+}
+
+export const SCOPE_REFUSAL: Record<Lang, string> = {
+  en: "I only help with personal finance — loans, EMIs, interest and fees, credit cards, insurance policies, claims, premiums and banking. Ask me something from your uploaded document and I'll answer with the exact page and clause.",
+  hi: "मैं सिर्फ़ पर्सनल फ़ाइनेंस — लोन, EMI, ब्याज और शुल्क, क्रेडिट कार्ड, बीमा पॉलिसी, क्लेम, प्रीमियम और बैंकिंग — में मदद करता हूँ। अपने अपलोड किए दस्तावेज़ से जुड़ा सवाल पूछें, मैं सटीक पेज और क्लॉज़ के साथ जवाब दूँगा।",
+  hinglish: "Main sirf personal finance — loan, EMI, interest aur fees, credit card, insurance policy, claim, premium aur banking — mein madad karta hoon. Apne uploaded document se juda sawal poochhiye, main exact page aur clause ke saath jawab dunga.",
+};
+
+
 function cite(clauses: Clause[], id: string): Citation {
   const clause = clauses.find((item) => item.id === id);
   if (!clause) throw new Error(`Missing clause ${id}`);
@@ -1007,6 +1070,16 @@ export async function ask(docId: string, question: string, lang: Lang) {
     lang,
     at: new Date().toISOString(),
   });
+
+  // Bharosa AI is a finance and banking assistant. Off-topic questions are
+  // declined up front instead of being sent to retrieval or the model.
+  if (isOffTopic(clean, doc.clauses.map((clause) => clause.text).join(" "))) {
+    const refusal = message(SCOPE_REFUSAL[lang], [], lang, true, "rules");
+    history.push(refusal);
+    store.chat[doc.id] = history.slice(-24);
+    pushAudit("bharosa", "Out-of-scope question declined", doc.name);
+    return { messages: store.chat[doc.id], answer: refusal };
+  }
 
   let result: ChatMessage | null = null;
   // Uploaded documents are answered only from their own text and retrieved

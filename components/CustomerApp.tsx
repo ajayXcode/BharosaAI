@@ -45,6 +45,7 @@ import type {
 } from "@/lib/bharosa";
 import { Button, Chip, Logo, Skeleton, cn, formatDate } from "@/components/ui";
 import { HomeScreen } from "@/components/HomeScreen";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { UploadDocument } from "@/components/UploadDocument";
 import { useRealtimeWorkspace } from "@/lib/use-realtime";
 
@@ -343,6 +344,7 @@ export function CustomerApp({ embed = false }: { embed?: boolean }) {
             </span>
           </div>
           <div className="flex items-center gap-0.5 justify-self-end">
+            <ThemeToggle tone="light" className="!size-7 !px-0 sm:!h-7" />
             <button
               type="button"
               onClick={cycleLang}

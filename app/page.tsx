@@ -16,6 +16,8 @@ import {
   Smartphone,
 } from "lucide-react";
 import { Logo } from "@/components/ui";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { PLANS } from "@/lib/plans";
 
 const capabilities = [
   {
@@ -88,7 +90,7 @@ const faqs = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f4f7fb] text-ink">
+    <main className="min-h-screen bg-page text-ink">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-navy/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-5">
           <Link href="/" aria-label="Bharosa AI home">
@@ -97,9 +99,11 @@ export default function Home() {
           <nav className="ml-auto hidden items-center gap-6 text-[12.5px] font-semibold text-white/65 md:flex">
             <a href="#product" className="transition hover:text-white">Product</a>
             <a href="#security" className="transition hover:text-white">Security</a>
+            <a href="#plans" className="transition hover:text-white">Plans</a>
             <a href="#faq" className="transition hover:text-white">FAQ</a>
           </nav>
           <div className="ml-auto flex items-center gap-2 md:ml-0">
+            <ThemeToggle className="hidden sm:inline-flex" />
             <Link
               href="/login"
               className="hidden rounded-full px-3 py-2 text-[12.5px] font-semibold text-white/75 transition hover:text-white sm:block"
@@ -108,7 +112,7 @@ export default function Home() {
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 rounded-full bg-sky px-3.5 py-2 text-[12.5px] font-bold text-navy transition hover:bg-white"
+              className="inline-flex items-center gap-1.5 rounded-full bg-sky px-3.5 py-2 text-[12.5px] font-bold text-[#002e6e] transition hover:bg-white"
             >
               Open workspace
               <ArrowRight className="size-3.5" />
@@ -143,7 +147,7 @@ export default function Home() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 rounded-xl bg-sky px-5 py-3 text-[13.5px] font-bold text-navy shadow-[0_12px_30px_-12px_rgba(0,186,242,0.9)] transition hover:bg-white"
+                className="inline-flex items-center gap-2 rounded-xl bg-sky px-5 py-3 text-[13.5px] font-bold text-[#002e6e] shadow-[0_12px_30px_-12px_rgba(0,186,242,0.9)] transition hover:bg-white"
               >
                 Start with your document
                 <ArrowRight className="size-4" />
@@ -171,7 +175,7 @@ export default function Home() {
           <div className="relative mx-auto w-full max-w-[440px]">
             <div className="absolute -inset-4 rounded-[2rem] bg-sky/10 blur-2xl" aria-hidden />
             <div className="relative rounded-[1.75rem] border border-white/12 bg-white/[0.07] p-3 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.65)] backdrop-blur">
-              <div className="rounded-[1.25rem] bg-white p-4 text-ink shadow-xl">
+              <div className="rounded-[1.25rem] bg-card p-4 text-ink shadow-xl">
                 <div className="flex items-center justify-between">
                   <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-navy">
                     <FileSearch className="size-3.5 text-sky" /> Policy review
@@ -248,7 +252,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-line bg-white">
+      <section className="border-y border-line bg-card">
         <div className="mx-auto max-w-6xl px-5 py-16">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -348,7 +352,98 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-line bg-white">
+      <section id="plans" className="border-t border-line bg-page">
+        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+          <div className="max-w-2xl">
+            <p className="font-mono text-[10px] font-semibold tracking-[0.18em] text-ink-3 uppercase">
+              Our Subscription Plans
+            </p>
+            <h2 className="mt-2 text-[30px] font-extrabold tracking-[-0.045em] text-navy sm:text-[38px]">
+              Pay for the clarity, not the paperwork
+            </h2>
+            <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
+              Every plan keeps your documents private to your account. Upgrade when you need voice,
+              comparisons and team controls — cancel anytime.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-3 md:grid-cols-3">
+            {PLANS.map((plan) => (
+              <div
+                key={plan.id}
+                className={`relative flex flex-col rounded-3xl border p-5 ${
+                  plan.featured
+                    ? "border-sky/40 bg-navy text-white shadow-[0_24px_60px_-32px_rgba(0,46,110,0.6)]"
+                    : "border-line bg-card"
+                }`}
+              >
+                {plan.featured ? (
+                  <span className="absolute -top-2.5 right-4 rounded-full bg-sky px-2.5 py-0.5 text-[9.5px] font-bold tracking-wide text-[#002e6e] uppercase">
+                    Most popular
+                  </span>
+                ) : null}
+                <h3
+                  className={`text-[13px] font-bold tracking-[0.02em] uppercase ${
+                    plan.featured ? "text-sky" : "text-ink-3"
+                  }`}
+                >
+                  {plan.name}
+                </h3>
+                <p className="mt-2 flex items-baseline gap-1.5">
+                  <span
+                    className={`text-[32px] font-extrabold tracking-[-0.04em] ${
+                      plan.featured ? "text-white" : "text-navy"
+                    }`}
+                  >
+                    {plan.price}
+                  </span>
+                  <span className={`text-[11px] ${plan.featured ? "text-white/55" : "text-ink-3"}`}>
+                    {plan.period}
+                  </span>
+                </p>
+                <p
+                  className={`mt-1.5 text-[11.5px] leading-relaxed ${
+                    plan.featured ? "text-white/60" : "text-ink-2"
+                  }`}
+                >
+                  {plan.note}
+                </p>
+                <ul className="mt-4 flex-1 space-y-2">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className={`flex items-start gap-2 text-[11.5px] ${
+                        plan.featured ? "text-white/80" : "text-ink-2"
+                      }`}
+                    >
+                      <Check
+                        className={`mt-0.5 size-3.5 shrink-0 ${plan.featured ? "text-sky" : "text-ok"}`}
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/login"
+                  className={`mt-5 inline-flex h-10 items-center justify-center gap-1.5 rounded-xl text-[12.5px] font-bold transition ${
+                    plan.featured
+                      ? "bg-sky text-[#002e6e] hover:bg-white"
+                      : "bg-navy text-white hover:bg-navy-2"
+                  }`}
+                >
+                  {plan.id === "free" ? "Start for free" : plan.id === "pro" ? "Choose Pro" : "Talk to us"}
+                  <ArrowRight className="size-3.5" />
+                </Link>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-[10.5px] text-ink-3">
+            Plans are assigned by the workspace owner. Enterprise seats are provisioned from the
+            admin panel.
+          </p>
+        </div>
+      </section>
+
+      <footer className="border-t border-line bg-card">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between">
           <Logo tone="dark" />
           <p className="max-w-lg text-[10.5px] leading-relaxed text-ink-3">
@@ -358,6 +453,8 @@ export default function Home() {
           <div className="flex gap-4 text-[11px] font-semibold text-ink-2">
             <Link href="/login" className="hover:text-navy">Sign in</Link>
             <a href="#security" className="hover:text-navy">Security</a>
+            <a href="#plans" className="hover:text-navy">Plans</a>
+            <Link href="/admin" className="hover:text-navy">Admin</Link>
           </div>
         </div>
       </footer>

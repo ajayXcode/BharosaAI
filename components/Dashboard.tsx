@@ -50,6 +50,7 @@ import type {
   WorkspaceResponse,
 } from "@/lib/bharosa";
 import { WorkspacePhone } from "@/components/WorkspacePhone";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   Button,
   Card,
@@ -372,6 +373,7 @@ export function Dashboard({ embed = false }: { embed?: boolean }) {
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
             <span
               className="hidden items-center gap-1.5 rounded-full bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/80 ring-1 ring-white/10 sm:flex"
               title={health?.database.connected ? "Persisted in Supabase" : "Workspace storage unavailable"}
@@ -419,7 +421,7 @@ export function Dashboard({ embed = false }: { embed?: boolean }) {
             <button
               type="button"
               onClick={() => void signOut()}
-              className="flex cursor-pointer items-center gap-1.5 rounded-full bg-sky px-2.5 py-1.5 text-[10.5px] font-semibold text-navy transition hover:bg-white"
+              className="flex cursor-pointer items-center gap-1.5 rounded-full bg-sky px-2.5 py-1.5 text-[10.5px] font-semibold text-[#002e6e] transition hover:bg-white"
               title="Sign out"
             >
               <UserRound className="size-3.5" />
