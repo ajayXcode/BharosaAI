@@ -9,6 +9,7 @@ import {
   Bot,
   BrainCircuit,
   Check,
+  ChevronLeft,
   ChevronRight,
   CircleAlert,
   Clock,
@@ -45,6 +46,7 @@ import type {
 } from "@/lib/bharosa";
 import { Button, Chip, Logo, Skeleton, cn, formatDate } from "@/components/ui";
 import { HomeScreen } from "@/components/HomeScreen";
+import { PaytmHome } from "@/components/PaytmHome";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UploadDocument } from "@/components/UploadDocument";
 import { useRealtimeWorkspace } from "@/lib/use-realtime";
@@ -87,6 +89,7 @@ export function CustomerApp({ embed = false }: { embed?: boolean }) {
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [empty, setEmpty] = useState<EmptyWorkspace | null>(null);
   const [tab, setTab] = useState<Tab>("decode");
+  const [insideBharosa, setInsideBharosa] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState("");
@@ -326,15 +329,28 @@ export function CustomerApp({ embed = false }: { embed?: boolean }) {
       await load();
     });
 
-  if (empty) return <EmptyCustomer onDone={uploaded} />;
+  if (!insideBharosa) return <PaytmHome onOpenBharosa={() => setInsideBharosa(true)} />;
+
+  if (empty) return <EmptyCustomer onDone={uploaded} onBack={() => setInsideBharosa(false)} />;
 
   return (
     <div className="flex h-dvh flex-col bg-page">
       <header className="shrink-0 border-b border-line bg-card px-3.5 pt-2.5 pb-2">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <span className="grid size-8 place-items-center justify-self-start rounded-full bg-navy text-[10px] font-bold text-white">
-            KS
-          </span>
+          <div className="flex items-center gap-1 justify-self-start">
+            <button
+              type="button"
+              onClick={() => setInsideBharosa(false)}
+              className="grid size-7 cursor-pointer place-items-center rounded-full text-navy hover:bg-page"
+              aria-label="Back to Paytm"
+              title="Back to Paytm"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <span className="grid size-8 place-items-center rounded-full bg-navy text-[10px] font-bold text-white">
+              KS
+            </span>
+          </div>
           <div className="justify-self-center text-center leading-none">
             <span className="block text-[18px] font-extrabold tracking-[-0.035em] text-[#00baf2]">
               Paytm
@@ -507,7 +523,13 @@ export function CustomerApp({ embed = false }: { embed?: boolean }) {
   );
 }
 
-function EmptyCustomer({ onDone }: { onDone: (next: WorkspaceData) => void }) {
+function EmptyCustomer({
+  onDone,
+  onBack,
+}: {
+  onDone: (next: WorkspaceData) => void;
+  onBack: () => void;
+}) {
   return (
     <div className="flex h-dvh flex-col bg-page">
       <header className="shrink-0 border-b border-line bg-card px-3.5 py-3">
@@ -518,9 +540,13 @@ function EmptyCustomer({ onDone }: { onDone: (next: WorkspaceData) => void }) {
               <BrainCircuit className="size-2.5" /> Bharosa AI
             </span>
           </div>
-          <span className="rounded-full bg-sky-soft px-2 py-1 text-[9px] font-bold text-navy">
-            Your account
-          </span>
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex cursor-pointer items-center gap-0.5 rounded-full bg-sky-soft px-2 py-1 text-[9px] font-bold text-navy"
+          >
+            <ChevronLeft className="size-3" /> Paytm
+          </button>
         </div>
       </header>
       <main className="min-h-0 flex-1 overflow-y-auto p-3">

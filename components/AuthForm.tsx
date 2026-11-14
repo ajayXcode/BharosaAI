@@ -15,9 +15,9 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [oauthBusy, setOauthBusy] = useState<"google" | "github" | null>(null);
+  const [oauthBusy, setOauthBusy] = useState<"google" | null>(null);
 
-  async function oauth(provider: "google" | "github") {
+  async function oauth(provider: "google") {
     setError(null);
     setOauthBusy(provider);
     try {
@@ -69,12 +69,12 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
             : "Real account, private data, live sync across your devices."}
         </p>
 
-        <div className="mt-6 grid gap-2 sm:grid-cols-2">
+        <div className="mt-6">
           <button
             type="button"
             onClick={() => oauth("google")}
             disabled={busy || oauthBusy !== null}
-            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-page text-[13px] font-semibold text-ink transition hover:border-sky/40 hover:bg-card disabled:opacity-60"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-line bg-page text-[13px] font-semibold text-ink transition hover:border-sky/40 hover:bg-card disabled:opacity-60"
           >
             {oauthBusy === "google" ? (
               <Loader2 className="size-4 animate-spin" />
@@ -98,22 +98,7 @@ export function AuthForm({ next = "/dashboard" }: { next?: string }) {
                 />
               </svg>
             )}
-            Google
-          </button>
-          <button
-            type="button"
-            onClick={() => oauth("github")}
-            disabled={busy || oauthBusy !== null}
-            className="flex h-11 items-center justify-center gap-2 rounded-xl border border-line bg-page text-[13px] font-semibold text-ink transition hover:border-sky/40 hover:bg-card disabled:opacity-60"
-          >
-            {oauthBusy === "github" ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <svg viewBox="0 0 24 24" className="size-4 fill-current" aria-hidden="true">
-                <path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12A11.5 11.5 0 0 0 12 .5Z" />
-              </svg>
-            )}
-            GitHub
+            Continue with Google
           </button>
         </div>
 

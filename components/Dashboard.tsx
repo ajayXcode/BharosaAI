@@ -358,8 +358,8 @@ export function Dashboard({ embed = false }: { embed?: boolean }) {
     });
 
   return (
-    <div className="grid h-dvh min-h-0 grid-cols-1 bg-[#07152a] min-[1280px]:grid-cols-[minmax(0,1fr)_420px]">
-      <div className="flex min-h-0 min-w-0 flex-col overflow-hidden bg-page min-[1280px]:m-3 min-[1280px]:mr-0 min-[1280px]:rounded-[28px] min-[1280px]:shadow-[0_24px_80px_-40px_rgba(0,0,0,0.65)]">
+    <div className="grid h-dvh min-h-0 grid-cols-1 bg-[#082a5e] min-[1280px]:grid-cols-[minmax(0,1fr)_392px]">
+      <div className="flex min-h-0 min-w-0 flex-col overflow-hidden bg-page min-[1280px]:my-3 min-[1280px]:ml-3 min-[1280px]:rounded-[22px] min-[1280px]:shadow-[0_24px_80px_-40px_rgba(0,0,0,0.7)]">
       <header className="shrink-0 bg-navy px-3 py-2.5 text-white lg:px-4">
         <div className="flex items-center gap-3">
           <Logo tone="light" className="shrink-0" />

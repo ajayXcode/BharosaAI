@@ -20,7 +20,7 @@ workspace at `/app?embed=1`, so an upload, approval or language change appears i
 | Route | Purpose |
 |-------|---------|
 | `/` | Marketing site and product overview |
-| `/login` | Supabase email/password, Google and GitHub sign-in and account creation |
+| `/login` | Supabase email/password and Google sign-in and account creation |
 | `/auth/callback` | Supabase OAuth code exchange, then redirect to the workspace |
 | `/admin` | Owner-only user list with Free / Pro / Enterprise plan controls |
 | `/dashboard` | Private workspace: document library, facts, red flags, stress test, cited chat, verify, Act, live customer phone |
@@ -70,14 +70,14 @@ navy panels stay deep navy for contrast.
 
 ## Social sign-in
 
-`/login` offers Google and GitHub through Supabase OAuth. The callback route is `/auth/callback`.
+`/login` offers Google through Supabase OAuth. The callback route is `/auth/callback`.
 Add these exact URLs in Supabase → Authentication → URL Configuration (Redirect URLs):
 
 - `http://localhost:3000/auth/callback`
 - `https://bharosa-ai-paytm.vercel.app/auth/callback`
 - `https://bharosa-ai-paytm-<deployment>.vercel.app/auth/callback` for preview deployments
 
-Enable the Google and GitHub providers under Authentication → Providers and paste their client ID and
+Enable the Google provider under Authentication → Providers and paste its client ID and
 secret there. Your Supabase callback (`https://<ref>.supabase.co/auth/v1/callback`) stays as the
 provider-side redirect; the app URL above is where Supabase returns the user.
 

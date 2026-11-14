@@ -290,7 +290,7 @@ export function AdminPanel({
                 </div>
               ) : users.length === 0 ? (
                 <div className="px-4 py-10 text-center text-[12.5px] text-ink-3">
-                  No accounts yet. Users appear here as soon as they sign up with email, Google or GitHub.
+                  No accounts yet. Users appear here as soon as they sign up with email or Google.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
