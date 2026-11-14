@@ -10,3 +10,9 @@ next-env.d.ts
 .DS_Store
 
 .vercel
+
+# local QA artifacts
+/shot*.png
+/shot.mjs
+/qa-prod-email.txt
+/*.jar
