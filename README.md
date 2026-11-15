@@ -1,3 +1,4 @@
+<img width="1307" height="929" alt="image" src="https://github.com/user-attachments/assets/82842140-2160-448d-8d3e-7d9e99a99088" />
 # Bharosa AI
  
 Bharat's evidence-linked financial copilot: **Explain → Verify → Act.**
@@ -8,6 +9,9 @@ the next step with explicit consent.
  
 Built for the **Paytm Build for India AI Hackathon**, Track 2: *AI-Powered Financial Journeys*.
 **Team CJP (Coding Janta Party):** Ajay Yadav, Ratnesh Pathak, Shivam Prajapati.
+
+<img width="1307" height="929" alt="image" src="https://github.com/user-attachments/assets/7a574ed7-428f-4d2d-bd58-c2a448eb54f5" />
+
  
 ## Two experiences, one trust layer
  
